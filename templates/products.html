@@ -1,0 +1,103 @@
+<h1>PRODUCTS</h1>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="openModale()">
+    Add Product
+</button>
+
+
+<div class="card-body">
+    <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" >
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Date de creation</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Date de creation</th>
+                </tr>
+            </tfoot>
+
+            <tbody>
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+      </div>
+      <div class="modal-body">
+        
+        <form action="" id="formProduct">
+            <div class="form-row">
+                <div class="col">
+                    <label for="">Name : </label>
+                    <input  type="text" name="name" class="form-control">
+                </div>
+
+                <div class="col">
+                    <label for="">Description : </label>
+                    <textarea  name="description" class="form-control"></textarea>
+                </div>
+
+                <div class="col">
+                    <label for="">Price : </label>
+                    <input  type="number" name="price" class="form-control">
+                </div>
+
+                <div class="col">
+                    <label for="">Stock : </label>
+                    <input  type="number" name="stock" class="form-control">
+                </div>
+
+                <div class="col"></div>
+                    <select  name="category" id="">
+                        <option selected >Open this select Category </option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label for="">Image : </label>
+                    <input  id="fileUpload" type="file" name="image" class="form-control" accept="image/*">
+                </div>
+
+            </div>
+        </form>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button onclick="addProduct()" type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div> 
+
+
+
