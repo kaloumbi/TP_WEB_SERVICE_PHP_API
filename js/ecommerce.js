@@ -84,9 +84,105 @@ class Ecommerce {
                 { data: 'idProduct' },
                 { data: 'name' },
                 { data: 'description' },
-                { data: 'price' },
+                { data: 'price',
+                    render: function ( data, type, row ) {
+                        return '€'+ data;
+                    }
+                },
                 { data: 'stock' },
-                { data: 'createdAt' }
+                { data: 'createdAt' },
+                { data: 'idProduct', 
+                    render: function ( id, type, row ) {
+                        return `<button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateProduct-${id}" onclick="openModaleUpdate(${id})"> UPDATE </button>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteProduct-${id}" onclick="openModaleDeleteConfirmation(${id})"> DELETE </button>
+                        
+                        <!-- Modal Update Product-->
+                        <div class="modal" id="updateProduct-${id}" tabindex="-1" aria-labelledby="updateProductModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Update Product</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+                            </div>
+                            <div class="modal-body">
+                                
+                                <form action="" id="formUpdateProduct-${id}">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <label for="">Name : </label>
+                                            <input   type="text" name="name" class="form-control" value="${row.name}" >
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="">Description : </label>
+                                            <textarea  name="description" class="form-control" > ${row.description} </textarea>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="">Price : </label>
+                                            <input  type="number" name="price" class="form-control" value="${row.price}">
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="">Stock : </label>
+                                            <input  type="number" name="stock" class="form-control" value="${row.stock}" >
+                                        </div>
+
+                                        <div class="col">${row.category}</div>
+                                            <select  name="category" value="${row.category}">
+                                                <option selected >Open this select Category </option>
+                                                <option value="1" ${row.category === 1 ? 'selected' : '' } >One</option>
+                                                <option value="2" ${row.category === 2 ? 'selected' : '' } >Two</option>
+                                                <option value="3" ${row.category === 3 ? 'selected' : '' } >Three</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="">Image : </label>
+                                            <input  type="file" name="image" class="form-control" accept="image/*">
+                                        </div>
+
+                                    </div>
+                                </form>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button onclick="updateProduct(${id}, '${row.image}' )" type="button" class="btn btn-primary">Update Product</button>
+                            </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Modal Update Product-->
+                        <div class="modal" id="deleteProduct-${id}" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Product</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button>
+                            </div>
+                            <div class="modal-body">
+
+                                <p> Are you sure you want to delete this product ? We remind you that this action is irreversible ! </p>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button onclick="deleteProduct(${id})" type="button" class="btn btn-danger">Delete Product</button>
+                            </div>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        `;
+                    }
+                }
             ]
         } );
     }

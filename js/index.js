@@ -15,7 +15,32 @@ openModale = ()  =>{
 }
 
 
+openModaleUpdate = (id)  =>{
+    console.log(`Opening update modal for product ID: ${id}`); 
+    var myModal = new bootstrap.Modal($(`#updateProduct-${id}`), {
+        backdrop: true, // ou true/false selon vos besoins
+        keyboard: false
+    })
+    console.log(`modal`, myModal);
+    myModal.show()
 
+}
+
+openModaleDeleteConfirmation = (id)  =>{
+    console.log(`Opening update modal for product ID: ${id}`); 
+    var myModal = new bootstrap.Modal($(`#deleteProduct-${id}`), {
+        backdrop: true, // ou true/false selon vos besoins
+        keyboard: false
+    })
+    console.log(`modal`, myModal);
+    myModal.show()
+
+}
+
+
+/*******************
+                    FONCTIONS AJOUTS
+********************/
 addProduct = () => {
     //upload image
     //AMELIORATION DE LA FONCTION PAR CECI
@@ -51,13 +76,32 @@ addProduct = () => {
             if (response.ok) {
                 return response.json();
             }
-        })
-        .then((response) => { //un autre then pour recuperer la response dans ce format
+        }).then((response) => { //un autre then pour recuperer la response dans ce format
             if (response.status == 200) {
                 console.log(response.result);
+                //initialiser notre objet
+                var table = $("#dataTable").DataTable();
+                var tableLength = table.rows().data().length ;
+                //recuperer le dernier element du tableau
+                var id = table.row(tableLength - 1).data("idProduct") + 1;
+                
+
+                let product = {
+                    idProduct: id,
+                    name: data.get("name"),
+                    description: data.get("description"),
+                    price: data.get("price"),
+                    stock: data.get("stock"),
+                    image: data.get("image"),
+                    createAt: new Date().toISOString().slice(0, 19).replace('T', ' '),
+
+                }
+
+                table.row.add(product).draw;
+
                 //appel de la fonction updloadImage
                 uploadImage(fileProduct);
-                document.getElementById("formProduct").reset(); //remettre à Zero tous les champs
+                document.getElementById("formProduct").reset(); //remettre à Zero tous les champs du formulaire
                 
                 document.getElementsByClassName("btn-close")[0].click(); //fermer le modal
 
@@ -71,6 +115,90 @@ addProduct = () => {
     // console.log("Mon Produit affiché", constructURLParams(newProduct));
 
 }
+
+
+/*******************
+                    FONCTIONS UPDATE
+********************/
+updateProduct = (id, oldImageName) => {
+
+    let formUpdateProduct = document.getElementById("formUpdateProduct-"+id);
+    let data = new FormData(formUpdateProduct);
+    data.append("API_KEY", API_KEY);
+    data.append("idProduct", id);
+
+
+
+    let imageToUpload = data.get("image");
+
+    //si l'image est defini => user a bien choisi l'image
+    if (imageToUpload.name !== "") {
+        data.set("image", imageToUpload.name);
+    } else {
+        data.set("image", oldImageName)
+    }
+
+    //data value pour stocker notre objet
+    let dataValue = {}
+
+    for (var value of data.entries()) { //value un tableau de deux elts
+        dataValue[value[0]] = value[1];
+        
+    }
+
+    //console.log(dataValue); mettre à jour les produits avec PUT
+    const url = API + 'product?' + constructURLParams(dataValue);
+    
+    
+    fetch(url, {
+        method: "PUT",
+    }).then((response) => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            log("Erreur déclanchée lors de l'execution de la requette !");
+        }
+    }).then((result) => {
+        if (result.status === 200) {
+            if (imageToUpload.name !== "") {
+                uploadImage(imageToUpload)
+                deleteImage(oldImageName);
+            }
+            console.log(result.result);
+            document.getElementById("formUpdateProduct-"+id).reset();
+            
+        } else {
+            console.log(result.message);
+        }
+    })
+    
+}
+
+//fonction pour supprimer l'image existante depuis la bd et ensuite ajouter la nouvelle
+deleteImage = (name) => {
+    const url = API + 'images?name='+name+'&API_KEY='+API_KEY;
+
+    fetch(
+        url, 
+        {
+            method: "DELETE"
+        }
+    ).then((response) => {
+        if(response.ok) {
+            return response.json();
+        }else{
+            console.log("Erreur déclenchée lors de l'execution de la requette !");
+        }
+
+    }).then((result) => {
+        if (result.status === 200) {
+            console.log(result.result);
+        }else{
+            console.log(result.message);
+        }
+    })
+}
+
 
 //creation de l'url qui sera associé à notre requette
 constructURLParams = (objet) => {
@@ -112,6 +240,48 @@ uploadImage = (file) => {
 }
 
 
+
+
+/*******************
+                    FONCTIONS DELETE
+********************/
+
+deleteProduct = (id) => {
+    const url = API + "product?id="+id+"&API_KEY="+API_KEY;
+
+    fetch(url, {
+        method: "DELETE"
+    }).then((response) => {
+        if (response.ok) {
+            return response.json();
+        }else{
+            console.log("Erreur déclanchée lors de l'execution de la requette de suppression du produit !");
+        }
+
+    }).then((result) => {
+        if (result.status == 200) {
+
+            //raffraichissement après la mise à jour
+            var table = $("#dataTable").DataTable();
+            var products = table.rows().data();
+
+            var product = products.filter(element => element.idProduct == id)[0];
+
+            var index = products.indexOf(product);
+
+            // Mettre à jour la ligne dans la DataTable avec la nouvelle API (fnDelete n'existe plus !)
+            table.row(index).data(product).draw(false); 
+            //supprimer en meme temps l'image
+            deleteImage(product.image);
+
+            console.log(result.result);
+            
+        } else {
+            console.log(result.message);
+            
+        }
+    })
+}
 
 
 
